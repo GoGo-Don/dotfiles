@@ -5,6 +5,13 @@ local opts = {
 }
 
 -----------------
+---Insert mode---
+-----------------
+
+vim.keymap.set("i", "<leader><leader>", "<Esc>", { noremap = true, silent = true })
+
+
+-----------------
 ---Normal mode---
 -----------------
 
