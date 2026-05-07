@@ -34,15 +34,19 @@ vim.opt.ignorecase = true		-- ignore case in searches by default
 vim.opt.smartcase = true		-- but make it case sensitive if an uppercase letter is typed
 
 -- Folding
-vim.api.nvim_create_autocmd({"FileType"}, {
-  callback = function()
-    if require("nvim-treesitter.parsers").has_parser() then
-      vim.opt.foldmethod = "expr"
-      vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function(args)
+    -- If a TS parser can be created for this buffer, enable TS folding.
+    local ok = pcall(vim.treesitter.get_parser, args.buf)
+
+    if ok then
+      vim.opt_local.foldmethod = "expr"
+      vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
     else
-      vim.opt.foldmethod = "indent"
+      vim.opt_local.foldmethod = "indent"
+      vim.opt_local.foldexpr = nil
     end
-  end
+  end,
 })
 vim.opt.foldenable = true    -- change to true if you want folds closed on open
 vim.opt.foldlevel = 0        -- avoid closed folds by default
